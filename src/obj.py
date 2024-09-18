@@ -47,10 +47,18 @@ class Playlist:
         return q
     
     def remove(self):
-        self._queue = self._queue[0:-1]
+        if self.playmode == 0:
+            self._queue = self._queue[0:-1]
+            return True
+        return False
     
-    def find(self):
-        return 1
+    def find(self, id):
+        try:
+            if id in self._queue:
+                return True 
+        except:
+            print("Query Failed")
+            return False
     
     def setdefault(self):
         self.playmode = 0
