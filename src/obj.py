@@ -4,17 +4,49 @@ import json
 def read_db():
     try:
         f = open('database.json')
-        data = json.load(f)
-        for song in data['catalog']:
-            tmp = song['id'], song['song_title'], song['artist'], song['album'], song['duration']
+        data = f.read()
+        # for song in data['catalog']:
+        #     tmp = song['id'], song['song_title'], song['artist'], song['album'], song['duration']
         return data
 
     except:
         print("Cannot Read DB")
         return False
 
+class Message:
+    headerlist =  '{ "play_last":0, "play_next":0, "now_playing":0, "get_playlist":0, "loop":0,"play_mode":0, "find":0, "remove":0, "add":0,"get_catalog":0,"mode":0,"quit":0}'
+    songid = -1
+    header = json.loads(headerlist)
+    headerbytes = '0b1111'
+    headervalue = 0x0
+    body = json()
+    def __init__(self):
+        self.generateheader()
 
+    def generateheader(self):
+        for key, value in self.header.items():
+            self.headerbytes += str(value)
+        # print(hex(int(self.headerbytes, base=2)))
+        self.headervalue = hex(int(self.headerbytes, base=2))
 
+    def setheaderparam(self, param, value):
+        self.header[param] = value
+        self.generateheader()
+    # def generateheader(self, playlist):
+
+    def setsongid(self, songid):
+        self.songid = songid
+
+    def setbody(self, body):
+        self.body = body
+
+    def generatepacket(self):
+        packet = ""
+        packet+=self.headervalue + "\r\n"
+        packet+=self.songid + "\r\n"
+        packet+=self.body + "\r\n\r\n"
+        return packet
+# msg = Message()
 class Catalog:
     def request(self):
         db = read_db()
@@ -23,20 +55,22 @@ class Catalog:
         return False
 
 class Playlist:
-    _queue = [-1]
-    _shufflequeue = [-1]
-    _history = [-1]
+    _queue = []
+    _shufflequeue = []
+    _history = []
     mode = 0
     playmode = 0
     playing = 0
 
-    def setdesign(self):
+    def setdesign(self, msg):
+        msg.setheaderparam("mode",0)
         self.mode = 0
     
-    def setplay(self):
+    def setplay(self, msg):
+        msg.setheaderparam("mode",1)
         self.mode = 1
     
-    def append(self, id):
+    def append(self, id, msg):
         self._queue.append(id)
     
     def reportlist(self):
