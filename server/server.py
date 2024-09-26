@@ -1,6 +1,7 @@
 from socket import *
-from ..src import obj
-import json
+import sys
+sys.path.append('../')
+import obj
 
 def decodeheader(header):
     return int(header, base=16)

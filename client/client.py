@@ -1,6 +1,7 @@
 from socket import *
-from ..src import obj
-
+import sys
+sys.path.append('../')
+import obj
 
 serverName = 'localhost'
 serverPort = 12000

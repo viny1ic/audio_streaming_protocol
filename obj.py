@@ -19,7 +19,8 @@ class Message:
     header = json.loads(headerlist)
     headerbytes = '0b1111'
     headervalue = 0x0
-    body = json()
+    empty_json = {} 
+    body = json.dumps(empty_json) 
     def __init__(self):
         self.generateheader()
 
