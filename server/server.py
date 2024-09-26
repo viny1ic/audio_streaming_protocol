@@ -29,11 +29,11 @@ def requesthandler(header, songid):
         playlist.quit()
     elif header[-2] == "0":
         playlist.mode = 0
-        body = "True"
+        body = "mode changed to design"
         print("mode changed to design")
     elif header[-2] == "1":
         playlist.mode = 1
-        body = "True"
+        body = "Mode changed to playing"
         print("mode changed to Playing")
     elif header[-3] == "1":
         body = obj.read_db()
@@ -41,17 +41,17 @@ def requesthandler(header, songid):
 
     elif header[-4] == "1":
         playlist.append(songid)
-        body = "True"
+        body = "Added song to playlist"
         print("added song to playlist")
 
     elif header[-5] == "1":
         playlist.remove(songid)
-        body = "True"
+        body = "Song removed from playlist"
         print("Song removed from playlist")
 
 
     elif header[-6] == "1":
-        body = playlist.find(songid)
+        body = playlist.findbyid(songid)   
         print("Queried song")
 
 
@@ -62,29 +62,30 @@ def requesthandler(header, songid):
 
     elif header[-7] == "1":
         playlist.setshuffle()
-        body = "True"
+        body = "Play mode changed to default"
         print("Play mode changed to default")
 
     elif header[-8] == "1":
         playlist.setloop()
-        body = "True"
+        body = "Mode changed to loop"
         print("Mode changed to loop")
 
     elif header[-9] == "1":
-        body = playlist.reportqueue()
+        body = "".join(playlist.reportqueue())
         print("reporting playlist to client")
     
     elif header[-10] == "1":
         body = playlist._queue[playlist.playing]
+        print("reporting now playing")
 
     elif header[-11] == "1":
         playlist.playnext()
-        body = "True"
+        body = "Playing next song"
         print("Playing next Song")
     elif header[-12] == 1:
         playlist.goback()
-        body = "True"
-        print("Playing last song")
+        body = "playing previous song"
+        print("Playing previous song")
     else:
         body = "False"
         print("Bad request")

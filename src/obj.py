@@ -86,13 +86,20 @@ class Playlist:
             return True
         return False
     
-    def find(self, id):
+    def findbyid(self, id):
         try:
-            if id in self._queue:
-                return True 
+            db = read_db()
+            found = db.find('{ "id":'+str(id))
+            response = ""
+            for x in db[found:]:
+                if x=="\n" or x=="\r\n":
+                    break
+                response+=x
+
+            return response
         except:
             print("Query Failed")
-            return False
+            return "False"
     
     def setdefault(self):
         self.playmode = 0
