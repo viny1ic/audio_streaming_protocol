@@ -1,6 +1,9 @@
 import random
 import json
 
+MODE = 0
+PLAYMODE = 0
+
 def read_db():
     try:
         f = open('database.json')
@@ -25,6 +28,7 @@ class Message:
         self.generateheader()
 
     def generateheader(self):
+        self.headerbytes = '0b1111'
         for key, value in self.header.items():
             self.headerbytes += str(value)
         # print(hex(int(self.headerbytes, base=2)))
@@ -43,9 +47,9 @@ class Message:
 
     def generatepacket(self):
         packet = ""
-        packet+=self.headervalue + "\r\n"
-        packet+=self.songid + "\r\n"
-        packet+=self.body + "\r\n\r\n"
+        packet+=str(self.headervalue) + "\r\n"
+        packet+=str(self.songid) + "\r\n"
+        packet+=str(self.body) + "\r\n\r\n"
         return packet
 # msg = Message()
 class Catalog:
