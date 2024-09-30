@@ -74,10 +74,7 @@ class Playlist:
 
     def append(self, id):
         self._queue.append(id)
-    
-    def reportlist(self):
-        return 1
-    
+
     def reportqueue(self):
         q = self._queue
         return q

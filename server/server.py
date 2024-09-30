@@ -29,7 +29,7 @@ def sendpacket(body, source, dest):
     connectionSocket.send(packet.encode())
 
 def requesthandler(header, songid):
-    print(header)
+    # print(header)
     print("[i] ", end="")
     if header[-1] == "1":
         playlist.quit()

@@ -53,7 +53,6 @@ def decodeinput(text, msg):
             msg.setheaderparam("mode", 0)
         case "Q":
             msg.setheaderparam("quit", 1)
-    # print(msg.headerbytes)
           
           
           
@@ -75,20 +74,22 @@ message = '''What would you like to do:
 15. Quit (enter Q)
 '''
 
+def __main__():
+    while True:
+        msg = obj.Message("localhost", "localhost")
+        choice = input(message)
+        decodeinput(choice, msg)
+        msg.setheaderparam("mode", obj.MODE)
+        msg.setheaderparam("play_mode", obj.PLAYMODE)
+        msg.generateheader()
+        packet = msg.generatepacket()
+        # print(msg.headerbytes)
+        clientSocket.send(packet.encode())
+        modifiedSentence = clientSocket.recv(1024)
+        if choice.upper() == "Q":
+            time.sleep(2)
+            clientSocket.close()
+            break
+        print('From Server: ', modifiedSentence.decode())
 
-while True:
-    msg = obj.Message("localhost", "localhost")
-    choice = input(message)
-    decodeinput(choice, msg)
-    msg.setheaderparam("mode", obj.MODE)
-    msg.setheaderparam("play_mode", obj.PLAYMODE)
-    msg.generateheader()
-    packet = msg.generatepacket()
-    print(msg.headerbytes)
-    clientSocket.send(packet.encode())
-    modifiedSentence = clientSocket.recv(1024)
-    if choice.upper() == "Q":
-        time.sleep(2)
-        clientSocket.close()
-        break
-    print('From Server: ', modifiedSentence.decode())
+__main__()
