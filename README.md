@@ -11,7 +11,7 @@
 - The client sends a request for which the server sends an appropriate response
 - The service runs on port 12000 of the server
 ### Packet Structure
-![image](https://github.com/user-attachments/assets/762c2889-c778-40d2-a0e0-e5c3533db262)
+![image](https://github.com/user-attachments/assets/0052eb3e-715c-4d1e-bf2b-f21f00292c02)
 - header: Contains configuration and control information encoded into bits
 - song ID: refers to the ID associated with a song in catalog.json
 - Body: Contains the response sent by the server
