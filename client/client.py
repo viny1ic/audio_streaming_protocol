@@ -52,7 +52,7 @@ def decodeinput(text, msg):
             msg.setheaderparam("mode", 0)
         case "Q":
             msg.setheaderparam("quit", 1)
-    print(msg.headerbytes)
+    # print(msg.headerbytes)
           
           
           
@@ -79,13 +79,14 @@ while True:
     msg = obj.Message()
     choice = input(message)
     decodeinput(choice, msg)
-    if choice == "Q":
-        clientSocket.close()
-        break
     msg.setheaderparam("mode", obj.MODE)
     msg.setheaderparam("play_mode", obj.PLAYMODE)
+    msg.generateheader()
     packet = msg.generatepacket()
     # print(msg.headerbytes)
     clientSocket.send(packet.encode())
     modifiedSentence = clientSocket.recv(1024)
+    if choice == "Q":
+        clientSocket.close()
+        break
     print('From Server: ', modifiedSentence.decode())

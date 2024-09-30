@@ -19,13 +19,14 @@ def read_db():
 class Message:
     headerlist =  '{ "play_last":0, "play_next":0, "now_playing":0, "get_playlist":0, "loop":0,"play_mode":0, "find":0, "remove":0, "add":0,"get_catalog":0,"mode":0,"quit":0}'
     songid = -1
-    header = json.loads(headerlist)
     headerbytes = '0b1111'
     headervalue = 0x0
     empty_json = {} 
     body = json.dumps(empty_json) 
     def __init__(self):
+        self.header = json.loads(self.headerlist)
         self.generateheader()
+        print(self.headerbytes)
 
     def generateheader(self):
         self.headerbytes = '0b1111'
@@ -36,8 +37,6 @@ class Message:
 
     def setheaderparam(self, param, value):
         self.header[param] = value
-        self.generateheader()
-    # def generateheader(self, playlist):
 
     def setsongid(self, songid):
         self.songid = songid
@@ -75,7 +74,7 @@ class Playlist:
         msg.setheaderparam("mode",1)
         self.mode = 1
     
-    def append(self, id, msg):
+    def append(self, id):
         self._queue.append(id)
     
     def reportlist(self):

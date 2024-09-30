@@ -13,7 +13,7 @@ def recievepacket():
     # print(packet)
     msg.headervalue = decodeheader(packet[0])
     msg.headerbytes = bin(msg.headervalue)
-    print(msg.headerbytes)
+    # print(msg.headerbytes)
     msg.songid = packet[1]
     msg.body = packet[2]
     return msg
@@ -24,12 +24,12 @@ def sendpacket(body):
     packet += str(msg.songid) + "\r\n"
     packet += str(msg.body) + "\r\n\r\n"
     connectionSocket.send(packet.encode())
-    connectionSocket.close()
 
 def requesthandler(header, songid):
-    print(header[-1])
     if header[-1] == "1":
         playlist.quit()
+        connectionSocket.close()
+
 
     if header[-3] == "1":
         body = obj.read_db()
@@ -116,12 +116,15 @@ playlist = obj.Playlist()
 serverSocket = socket(AF_INET, SOCK_STREAM)
 serverSocket.bind(('', serverPort))
 serverSocket.listen(1)
-print( "The server is ready to receive: " )
-while(True):
-    msg = obj.Message()
-    connectionSocket, addr = serverSocket.accept()
-    pkt = recievepacket()
-    body = requesthandler(pkt.headerbytes, pkt.songid)
-    sendpacket(body)
-    # if playlist.mode == 0:
+connectionSocket, addr = serverSocket.accept()
 
+print( "The server is ready to receive: " )
+try:
+    while(True):
+        msg = obj.Message()
+        pkt = recievepacket()
+        body = requesthandler(pkt.headerbytes, pkt.songid)
+        sendpacket(body)
+    
+except Exception as e:
+    print(e)
