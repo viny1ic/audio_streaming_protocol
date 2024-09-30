@@ -2,24 +2,27 @@ from socket import *
 import sys
 sys.path.append('../')
 import obj
+import time
 
 def decodeheader(header):
     return int(header, base=16)
 
 def recievepacket():
-    msg = obj.Message()
+    msg = obj.Message("localhost", "localhost")
     packet = connectionSocket.recv(1024).decode()
     packet = packet.split("\r\n")
     # print(packet)
-    msg.headervalue = decodeheader(packet[0])
+    msg.headervalue = decodeheader(packet[1])
     msg.headerbytes = bin(msg.headervalue)
     # print(msg.headerbytes)
-    msg.songid = packet[1]
-    msg.body = packet[2]
+    msg.songid = packet[2]
+    msg.body = packet[3]
     return msg
 
-def sendpacket(body):
-    packet = "" + msg.headervalue + "\r\n"
+def sendpacket(body, source, dest):
+    packet = ""
+    packet+=str(source) + " " + str(dest) + " " + time.strftime("%a, %d %b %Y %I:%M:%S %p", time.gmtime()) + "\r\n"
+    packet += msg.headervalue + "\r\n"
     msg.body = body
     packet += str(msg.songid) + "\r\n"
     packet += str(msg.body) + "\r\n\r\n"
@@ -123,10 +126,10 @@ connectionSocket, addr = serverSocket.accept()
 print( "The server is ready to receive: " )
 while(True):    
     try:
-        msg = obj.Message()
+        msg = obj.Message("localhost", "localhost")
         pkt = recievepacket()
         body = requesthandler(pkt.headerbytes, pkt.songid)
-        sendpacket(body)
+        sendpacket(body, "localhost", "localhost")
     
     except Exception as e:
         print(Exception, e)

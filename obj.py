@@ -1,5 +1,6 @@
 import random
 import json
+import time
 
 MODE = 0
 PLAYMODE = 0
@@ -8,8 +9,6 @@ def read_db():
     try:
         f = open('database.json')
         data = f.read()
-        # for song in data['catalog']:
-        #     tmp = song['id'], song['song_title'], song['artist'], song['album'], song['duration']
         return data
 
     except:
@@ -19,11 +18,18 @@ def read_db():
 class Message:
     headerlist =  '{ "play_last":0, "play_next":0, "now_playing":0, "get_playlist":0, "loop":0,"play_mode":0, "find":0, "remove":0, "add":0,"get_catalog":0,"mode":0,"quit":0}'
     songid = -1
+    source = ""
+    dest = ""
+    timestamp = ""
     headerbytes = '0b1111'
     headervalue = 0x0
     empty_json = {} 
     body = json.dumps(empty_json) 
-    def __init__(self):
+
+    def __init__(self, source, dest):
+        self.source = source
+        self.dest = dest
+        self.timestamp = time.strftime("%a, %d %b %Y %I:%M:%S %p", time.gmtime())
         self.header = json.loads(self.headerlist)
         self.generateheader()
 
@@ -31,7 +37,6 @@ class Message:
         self.headerbytes = '0b1111'
         for key, value in self.header.items():
             self.headerbytes += str(value)
-        # print(hex(int(self.headerbytes, base=2)))
         self.headervalue = hex(int(self.headerbytes, base=2))
 
     def setheaderparam(self, param, value):
@@ -45,11 +50,13 @@ class Message:
 
     def generatepacket(self):
         packet = ""
+        packet+=str(self.source) + " " + str(self.dest) + " " + str(self.timestamp) + "\r\n"
         packet+=str(self.headervalue) + "\r\n"
         packet+=str(self.songid) + "\r\n"
         packet+=str(self.body) + "\r\n\r\n"
         return packet
-# msg = Message()
+
+
 class Catalog:
     def request(self):
         db = read_db()
@@ -65,14 +72,6 @@ class Playlist:
     playmode = 0
     playing = 0
 
-    def setdesign(self, msg):
-        msg.setheaderparam("mode",0)
-        self.mode = 0
-    
-    def setplay(self, msg):
-        msg.setheaderparam("mode",1)
-        self.mode = 1
-    
     def append(self, id):
         self._queue.append(id)
     

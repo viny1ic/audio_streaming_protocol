@@ -77,7 +77,7 @@ message = '''What would you like to do:
 
 
 while True:
-    msg = obj.Message()
+    msg = obj.Message("localhost", "localhost")
     choice = input(message)
     decodeinput(choice, msg)
     msg.setheaderparam("mode", obj.MODE)
