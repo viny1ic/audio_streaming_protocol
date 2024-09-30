@@ -2,6 +2,7 @@ from socket import *
 import sys
 sys.path.append('../')
 import obj
+import time
 
 serverName = 'localhost'
 serverPort = 12000
@@ -13,7 +14,7 @@ usercatalog = obj.Catalog()
 
 def decodeinput(text, msg):
     text = text.split(" ")
-    match text[0]:
+    match text[0].upper():
         case "D":
             obj.MODE = 0
             msg.setheaderparam("mode", 0)
@@ -43,11 +44,11 @@ def decodeinput(text, msg):
         case "G":
             msg.setheaderparam("get_playlist", 1)
         case "J":
-            msg.setheaderparam("now_playing", 0)
+            msg.setheaderparam("now_playing", 1)
         case "N":
-            msg.setheaderparam("play_next", 0)
+            msg.setheaderparam("play_next", 1)
         case "H":
-            msg.setheaderparam("play_last", 0)
+            msg.setheaderparam("play_last", 1)
         case "I":
             msg.setheaderparam("mode", 0)
         case "Q":
@@ -83,10 +84,11 @@ while True:
     msg.setheaderparam("play_mode", obj.PLAYMODE)
     msg.generateheader()
     packet = msg.generatepacket()
-    # print(msg.headerbytes)
+    print(msg.headerbytes)
     clientSocket.send(packet.encode())
     modifiedSentence = clientSocket.recv(1024)
-    if choice == "Q":
+    if choice.upper() == "Q":
+        time.sleep(2)
         clientSocket.close()
         break
     print('From Server: ', modifiedSentence.decode())

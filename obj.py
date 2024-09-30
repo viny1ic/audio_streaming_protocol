@@ -26,7 +26,6 @@ class Message:
     def __init__(self):
         self.header = json.loads(self.headerlist)
         self.generateheader()
-        print(self.headerbytes)
 
     def generateheader(self):
         self.headerbytes = '0b1111'
@@ -84,9 +83,9 @@ class Playlist:
         q = self._queue
         return q
     
-    def remove(self):
+    def remove(self, id):
         if self.playmode == 0:
-            self._queue = self._queue[0:-1]
+            self._queue.remove(id)
             return True
         return False
     
@@ -94,6 +93,8 @@ class Playlist:
         try:
             db = read_db()
             found = db.find('{ "id":'+str(id))
+            if found == -1:
+                return "Not Found"
             response = ""
             for x in db[found:]:
                 if x=="\n" or x=="\r\n":
@@ -119,14 +120,14 @@ class Playlist:
         return 1
     
     def playnext(self):
-        if self.playmode!=3 and self._history[-1]!=self.playing:
+        if self.playmode!=3:
             self._history.append(self.playing)
         
         if self.playmode == 0:
             self.playing+=1%len(self._queue)
 
         elif self.playmode == 1:
-            randsong = random.randint(0,len(self._shufflequeue))
+            randsong = random.randint(0,max(self._shufflequeue))
             self.playing = randsong
             self._shufflequeue.remove(randsong)
 

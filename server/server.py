@@ -26,10 +26,12 @@ def sendpacket(body):
     connectionSocket.send(packet.encode())
 
 def requesthandler(header, songid):
+    print(header)
+    print("[i] ", end="")
     if header[-1] == "1":
         playlist.quit()
         connectionSocket.close()
-
+        exit(1)
 
     if header[-3] == "1":
         body = obj.read_db()
@@ -60,12 +62,12 @@ def requesthandler(header, songid):
         return body
 
     if header[-9] == "1":
-        body = "".join(playlist.reportqueue())
+        body = "Songs in order of playing: " + ", ".join(playlist.reportqueue()).rstrip(", ")
         print("reporting playlist to client")
         return body
     
     if header[-10] == "1":
-        body = playlist._queue[playlist.playing]
+        body = "Now playing: " + playlist._queue[playlist.playing]
         print("reporting now playing")
         return body
 
@@ -75,22 +77,22 @@ def requesthandler(header, songid):
         print("Playing next Song")
         return body
     
-    if header[-12] == 1:
+    if header[-12] == "1":
         playlist.goback()
         body = "playing previous song"
         print("Playing previous song")
+        return body
+
+    if header[-7] == "1":
+        playlist.setshuffle()
+        body = "Play mode changed to shuffle"
+        print("Play mode changed to shuffle")
         return body
 
     if header[-2] == "1":
         playlist.mode = 1
         body = "Mode changed to playing"
         print("mode changed to Playing")
-        return body
-
-    if header[-7] == "1":
-        playlist.setshuffle()
-        body = "Play mode changed to default"
-        print("Play mode changed to default")
         return body
 
     if header[-2] == "0":
@@ -100,14 +102,14 @@ def requesthandler(header, songid):
 
     if header[-7] == "0":
         playlist.setdefault()
-        body = "True"
+        body = "Play mode changed to default"
         print("Play mode changed to default")
 
     else:
-        body = "False"
+        body = "Bad request"
         print("Bad request")
     
-    return body
+    return "[i] " + str(body)
 
 
 
@@ -119,12 +121,13 @@ serverSocket.listen(1)
 connectionSocket, addr = serverSocket.accept()
 
 print( "The server is ready to receive: " )
-try:
-    while(True):
+while(True):    
+    try:
         msg = obj.Message()
         pkt = recievepacket()
         body = requesthandler(pkt.headerbytes, pkt.songid)
         sendpacket(body)
     
-except Exception as e:
-    print(e)
+    except Exception as e:
+        print(Exception, e)
+        continue
