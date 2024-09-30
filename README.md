@@ -26,4 +26,37 @@ The Header contains 16 bits. Its structure is as shown below. The server will ex
 ### Project Structure
 ![image](https://github.com/user-attachments/assets/9b479498-803c-47bc-bd32-18d9b6e7bdea)
 
+### Catalog Class methods
+request(): Reads the catalog database and returns the contents
 
+### Message class methods
+- \_\_init__(source, dest): Initializes the message object with the source and destination IPs. Also initializes headers and sets timestamp
+- generateheader(): Returns a string of bits derived from the headers json object
+- setheaderparam(param, value): Sets the header parameter to the corresponding value.
+- setsongid(songid): Sets the song ID of the message.
+- setbody(body): Sets the body of the message.
+- generatepacket(): Generates a packet in the form of a string that can be transmitted over sockets
+
+### Playlist class methods
+- append(id): append song with the supplied ID to the playlist
+- reportqueue(): returns the contents of the playlist
+- remove(id): removes the song with the supplied ID from the playlist
+- findbyid(id): checks if the song with the supplied ID exists in the playlist
+- setdefault(): sets the playmode to default
+- setshuffle(): sets the playmode to shuffle
+- setloop(): sets the playmode to loop
+- play(): sets the mode to play
+- playnext(): plays the next song in the queue
+- goback(): play the last played song
+- quit(): Quit
+
+### Client.py Methods
+- decodeinput(text, msg): parses user input and sets the corresponding header in the message
+- \_\_main__(): Takes user input, generates packet, sends it, receives server's response and displays it
+
+### Server.py Methods
+- decodeheader(header): returns a base 16 hexadecimal integer corresponding to the supplied bit string
+- recievepacket(): listens for an incoming packets from the client, interprets it and returns the constructed Message object.
+- sendpacket(body, source, dest): generates a packet string that can be transmitted to the client over the socket
+- requesthandler(header, songid): interprets the client's packet information and performs the corresponding action. Returns the body of the response header
+- main(): Starts the socket server, listens for client requests and serves the correct response.
